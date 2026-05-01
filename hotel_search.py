@@ -1,7 +1,9 @@
 import requests
 import os
 from dotenv import load_dotenv
+from datetime import datetime, timedelta
 
+from twilio.rest.api.v2010.account.usage.record import today
 
 load_dotenv()
 
@@ -40,8 +42,8 @@ class HotelSearch:
             "locale": "en-gb",
             "filter_by_currency": "USD",
             "order_by": "price",
-            "checkin_date": "2026-09-18",
-            "checkout_date": "2026-09-19",
+            "checkin_date": datetime.today().strftime("%Y-%m-%d"),
+            "checkout_date": (datetime.today() + timedelta(days=1)).strftime("%Y-%m-%d"),
             "room_number": "1",
             "adults_number": "1",
         }
@@ -54,8 +56,8 @@ class HotelSearch:
             if item['min_total_price'] is not None:
                 prices.append(item['min_total_price'])
         if not prices:
-                print(f"No valid prices found for {dest_id}")
-                return None, None, None
+            print(f"No valid prices found for {dest_id}")
+            return None, None, None
         cheapest = min(prices)
         for item in data['result']:
             if item['min_total_price'] == cheapest:
